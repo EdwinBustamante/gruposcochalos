@@ -11,6 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.edwinbustamante.gruposcochalos.Objetos.FirebaseReferences;
+import com.edwinbustamante.gruposcochalos.Objetos.GrupoMusical;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +27,29 @@ public class Main extends AppCompatActivity {
     private RecyclerView recyclerViewGrupos;
     private RecyclerViewAdaptadorPrincipal recyclerViewAdaptadorPrincipal;
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference gruposCochalosRef = database.getReference(FirebaseReferences.GRUPOS_COCHALOS_REFERENCE);
+    private String TAG;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        gruposCochalosRef.child(FirebaseReferences.GRUPO_MUSICAL_REFERENCE).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
         recyclerViewGrupos = (RecyclerView) findViewById(R.id.recyclerGrupos);
         recyclerViewGrupos.setLayoutManager(new LinearLayoutManager(this));
 
