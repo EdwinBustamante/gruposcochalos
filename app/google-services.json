@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "1075868686661",
+    "firebase_url": "https://gruposcochalosproyecto-c3136.firebaseio.com",
+    "project_id": "gruposcochalosproyecto-c3136",
+    "storage_bucket": "gruposcochalosproyecto-c3136.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075868686661:android:6ed4e8366e0a49fc",
+        "android_client_info": {
+          "package_name": "com.edwinbustamante.gruposcochalos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1075868686661-1sanpa6bgnuokvu1so5h11uqi31h9a5k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.edwinbustamante.gruposcochalos",
+            "certificate_hash": "a66802e4e96ad4c6cd58e3f1aea8e03dd5e4e0a4"
+          }
+        },
+        {
+          "client_id": "1075868686661-l4pb674k5ua8o4kuoo0uc242d5oogiaq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.edwinbustamante.gruposcochalos",
+            "certificate_hash": "2fa0b9440db3094edff27d6f49a9a1a7045a8eed"
+          }
+        },
+        {
+          "client_id": "1075868686661-gfqhp1f3bgfngo91tcvchc1q7kabclgs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzIucFDwvGb0ia3sh_zfBCy19FlmM5yKo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1075868686661-gfqhp1f3bgfngo91tcvchc1q7kabclgs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
