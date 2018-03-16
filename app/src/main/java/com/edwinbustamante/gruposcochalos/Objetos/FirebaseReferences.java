@@ -7,4 +7,5 @@ package com.edwinbustamante.gruposcochalos.Objetos;
 public class FirebaseReferences {
     final public static String GRUPOS_COCHALOS_REFERENCE="gruposcochalos";
     final public static String GRUPO_MUSICAL_REFERENCE="grupomusical";
+    final public static  String USERS_REFERENCE="users";
 }

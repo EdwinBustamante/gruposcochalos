@@ -26,8 +26,13 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".Cuenta" />
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".Main"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edwinbustamante.gruposcochalos.Main" />
+        </activity>
         <activity
             android:name=".RegistrarUsuario"
             android:label="@string/title_activity_registrar_usuario"
@@ -37,6 +42,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.edwinbustamante.gruposcochalos.LoginActivity" />
         </activity>
+        <activity
+            android:name=".Cuenta"
+            android:label="@string/title_activity_cuenta"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

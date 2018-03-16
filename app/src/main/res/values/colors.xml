@@ -3,4 +3,5 @@
     <color name="colorPrimary">#007887</color> <!---Color del toolbar-->
     <color name="colorPrimaryDark">#f9113e58</color> <!---color de la parte de arriba de la aplicacion-->
     <color name="colorAccent">#40C4FF</color>
+
 </resources>
