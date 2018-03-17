@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.edwinbustamante.gruposcochalos.Cuenta">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/cerrar_sesion"
+        android:icon="@drawable/administrative_tools"
+        android:iconTint="@drawable/administrative_tools"
+        android:iconTintMode="@drawable/administrative_tools"
+        android:title="Cerrar Sesion"
+        android:tooltipText="hola"
         app:showAsAction="never" />
 </menu>

@@ -54,6 +54,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ingresar.setOnClickListener(this);// el click esta siendo controlado por un metodo de la clase
         registrarUsuario.setOnClickListener(this);
 
+
+        //escuchador de cambios
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
