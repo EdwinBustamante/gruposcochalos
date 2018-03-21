@@ -1,0 +1,138 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#bbd5de"
+    android:orientation="vertical"
+    tools:context="com.edwinbustamante.gruposcochalos.CuentaUsuarioArchivos.CuentaUsuario">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cerrar_sesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cerrar Sesion" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_main_Cuenta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:background="@color/cuenta_main"
+
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+
+            android:id="@+id/cuenta_perfil"
+            android:layout_width="80sp"
+            android:layout_height="80sp"
+            android:layout_margin="9dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/portada" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="2dp"
+                    android:gravity="left"
+                    android:text="Grupo Musical:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/nombregrupo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:gravity="left"
+                    android:text="Nombre de grupo:"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@color/lightgray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginRight="2dp"
+                    android:gravity="left"
+                    android:text="Tipo de Musica:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:gravity="left"
+                    android:text="Cumbia Cristiana"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="3dp"
+        android:background="@color/lightgray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+</LinearLayout>
+
+
+

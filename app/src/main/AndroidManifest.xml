@@ -45,9 +45,19 @@
                 android:value="com.edwinbustamante.gruposcochalos.LoginActivity" />
         </activity>
         <activity
-            android:name=".Cuenta"
-            android:label="@string/title_activity_cuenta"
-            android:theme="@style/AppTheme"></activity>
+            android:name=".CuentaUsuarioArchivos.CuentaUsuario"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_cuenta_usuario"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".CuentaUsuarioArchivos.EditMainCuenta"
+            android:label="@string/title_activity_edit_main_cuenta"
+            android:parentActivityName=".CuentaUsuarioArchivos.CuentaUsuario"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edwinbustamante.gruposcochalos.CuentaUsuarioArchivos.CuentaUsuario" />
+        </activity>
     </application>
 
 </manifest>

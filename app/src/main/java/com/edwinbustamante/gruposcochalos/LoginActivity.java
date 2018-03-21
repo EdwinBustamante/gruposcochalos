@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.edwinbustamante.gruposcochalos.CuentaUsuarioArchivos.CuentaUsuario;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -61,9 +62,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 if (firebaseAuth.getCurrentUser() != null) {//si estamos logueados comenzamos una bnueva actividad
-                    Intent i = new Intent(LoginActivity.this, Cuenta.class);
+                    Intent i = new Intent(LoginActivity.this, CuentaUsuario.class);
                     startActivity(i);
                     finish();
+
                 }
             }
         };
@@ -107,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
 
                            /*
-                             AQUI YA NO ESTOY LLAMANDO A LA ACTIVIDAD CUENTA PORQUE MI ESCUCHADOR DE MI LOGUO SE ENCARGA DE VER SI ESTOY LOGUEADO O NO
+                             AQUI YA NO ESTOY LLAMANDO A LA ACTIVIDAD CUENTA PORQUE MI ESCUCHADOR DE MI LOGUEO SE ENCARGA DE VER SI ESTOY LOGUEADO O NO
 
                             */
 
