@@ -3,7 +3,7 @@
     <color name="colorPrimary">#007887</color> <!---Color del toolbar-->
     <color name="colorPrimaryDark">#f9113e58
     </color> <!---color de la parte de arriba de la aplicacion-->
-    <color name="colorAccent">#40C4FF</color>
+    <color name="colorAccent">#000000</color>
 
 
     <color name="backgroundcolor">#fcfcfc</color>
@@ -17,6 +17,8 @@
     <color name="pink">#fe104d</color>
     <color name="cuenta_main">#57d7be</color>
     <color name="black_overlay">#66000000</color>
+    <color name="blanco">#ffffff</color>
+
 
 
 </resources>

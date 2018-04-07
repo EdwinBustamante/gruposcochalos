@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/primero_layer"
+        android:duration="4500" />
+    <item
+        android:drawable="@drawable/segundo_layer"
+        android:duration="4500" />
+    <item
+        android:drawable="@drawable/tercero_layer"
+        android:duration="4500" />
+    <item
+        android:drawable="@drawable/cuarto_layer"
+        android:duration="4500" />
+    <item
+        android:drawable="@drawable/quinto_layer"
+        android:duration="4500" />
+</animation-list>

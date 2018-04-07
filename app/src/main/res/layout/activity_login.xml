@@ -1,14 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fondologinanimacion"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/my_bg_anim"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="1dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
     tools:context="com.edwinbustamante.gruposcochalos.LoginActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -21,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="Bienvenido.." />
 
 
     </android.support.design.widget.AppBarLayout>
@@ -38,26 +41,45 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+
+        >
 
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="0dp"
             android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                app:srcCompat="@drawable/icono_login" />
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <AutoCompleteTextView
                     android:id="@+id/correo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_action_user"
                     android:hint="Ingrese su correo"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textSize="16dp"
+
+                    />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -70,30 +92,15 @@
                     android:id="@+id/contrasenia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeActionId="6"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
+                    android:drawableStart="@drawable/ic_action_lock_closed"
+                    android:hint="Ingrese su contraseña (Obligatotio)"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textSize="16dp" />
 
             </android.support.design.widget.TextInputLayout>
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Switch
-                    android:id="@+id/recordar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Recordar Contraseña" />
-
-            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_ingresar"
@@ -101,7 +108,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/modelobottonlogin"
+                android:clickable="true"
+                android:elevation="24dp"
                 android:text="INGRESAR"
+                android:textColor="#ffffff"
                 android:textStyle="bold" />
 
 
@@ -109,14 +120,33 @@
                 android:id="@+id/olvide_contrasenia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:text="[Olvidé mi contraseña]" />
+                android:background="@drawable/modelobottonolvide"
+                android:text="[Olvidé mi contraseña]"
+                android:textAlignment="center"
+                android:textColor="@color/blanco"
+                android:textColorHint="@color/blanco"
+                android:textSize="12dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/yello" />
 
             <TextView
                 android:id="@+id/registrar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="¿NO TIENES CUENTA? REGISTRATE" />
+                android:layout_margin="0dp"
+                android:background="@drawable/modelobottoncreate"
+                android:padding="0dp"
+                android:text="¿NO TIENES CUENTA? REGISTRATE"
+                android:textAlignment="center"
+                android:textColor="@color/blanco"
+                android:textSize="12dp" />
 
         </LinearLayout>
 

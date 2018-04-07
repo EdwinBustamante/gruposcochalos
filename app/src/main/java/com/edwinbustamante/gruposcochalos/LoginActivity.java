@@ -2,6 +2,7 @@ package com.edwinbustamante.gruposcochalos;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +27,12 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-
+    /*animacion en el fondo del login
+    * */
     // UI references.
+    LinearLayout linearLayoutanimacion;
+    AnimationDrawable animacion;
+
     private AutoCompleteTextView in_correo;
     private EditText in_contrasenia;
     private Button ingresar;
@@ -43,7 +49,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        //############################################################################
+        //ANIMACION DEL FONDO
+        linearLayoutanimacion = (LinearLayout) findViewById(R.id.fondologinanimacion);
+        animacion = (AnimationDrawable) linearLayoutanimacion.getBackground();
+        animacion.setEnterFadeDuration(4500);
+        animacion.setExitFadeDuration(4500);
+        animacion.start();
+        //############################################################################
         in_correo = (AutoCompleteTextView) findViewById(R.id.correo);
         in_contrasenia = (EditText) findViewById(R.id.contrasenia);
         ingresar = (Button) findViewById(R.id.btn_ingresar);

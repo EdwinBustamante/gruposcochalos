@@ -2,6 +2,7 @@ package com.edwinbustamante.gruposcochalos;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.edwinbustamante.gruposcochalos.Objetos.FirebaseReferences;
@@ -21,7 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistrarUsuario extends AppCompatActivity {
-
+    LinearLayout linearLayoutanimacion;
+    AnimationDrawable animacion;
     private EditText nombreGrupoRegistro, correoRegistro, pasRegistro1, pasRegistro2;
     private Button registarRegistro;
     private FirebaseAuth mAuth;
@@ -34,6 +37,14 @@ public class RegistrarUsuario extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //############################################################################
+        //ANIMACION DEL FONDO
+        linearLayoutanimacion = (LinearLayout) findViewById(R.id.fondoregistroanimacion);
+        animacion = (AnimationDrawable) linearLayoutanimacion.getBackground();
+        animacion.setEnterFadeDuration(4500);
+        animacion.setExitFadeDuration(4500);
+        animacion.start();
+        //############################################################################
         nombreGrupoRegistro = (EditText) findViewById(R.id.nombreGrupoRegistro);
         correoRegistro = (EditText) findViewById(R.id.correoRegistro);
         pasRegistro1 = (EditText) findViewById(R.id.contraseniaRegistro);
