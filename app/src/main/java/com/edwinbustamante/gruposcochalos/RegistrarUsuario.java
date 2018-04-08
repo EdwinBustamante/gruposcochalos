@@ -73,6 +73,9 @@ public class RegistrarUsuario extends AppCompatActivity {
             if (pas1.equals(pas2)) {
                 mProgress.setMessage("Registrando, espere un momento por favor...");
                 mProgress.show();//lanzamos el progres Dialog
+                /*
+                * AQUI ESTAMOS INGRESANDO EL CORREO Y LA CONTRASEÑA
+                * */
                 mAuth.createUserWithEmailAndPassword(correoRegis, pas1).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -80,11 +83,16 @@ public class RegistrarUsuario extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             /*hacemos la llamada a la base de datos
+                            a la tabla de USUARIOS QUE YA ESTA DEFINIDO EN OBJETOS FIREBASEREFERENCE
                             * */
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child(FirebaseReferences.USERS_REFERENCE);
                             DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
-                            currentUserDB.child("name").setValue(nombreGrupo);
+                             /*
+                             AQUI ESTAMOS CREANDO LOS ATRIBUTOS DE LA TABLA USERS QUE YA LO TENEMOS INSTANCIADO
+                             * */
+                            currentUserDB.child("nombre").setValue(nombreGrupo);
                             currentUserDB.child("perfil").setValue("default");
+                            currentUserDB.child("genero").setValue("default");
 
                             String user_id = mAuth.getCurrentUser().getUid();
                             Intent i = new Intent(RegistrarUsuario.this, LoginActivity.class);
