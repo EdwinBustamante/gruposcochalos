@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA" />
+    <protected-broadcast android:name="android.intent.action.MEDIA_MOUNTED"/>
 
     <application
         android:allowBackup="true"
@@ -51,11 +53,12 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_cuenta_usuario"
             android:theme="@style/FullscreenTheme" />
+
         <activity
-            android:name=".CuentaUsuarioArchivos.EditMainCuenta"
-            android:label="@string/title_activity_edit_main_cuenta"
+            android:name=".ImagenFull.FulImagen"
+            android:label="Foto de Perfil"
             android:parentActivityName=".CuentaUsuarioArchivos.CuentaUsuario"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.edwinbustamante.gruposcochalos.CuentaUsuarioArchivos.CuentaUsuario" />

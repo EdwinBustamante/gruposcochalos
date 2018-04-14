@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.edwinbustamante.gruposcochalos.ImagenFull.FulImagen">
+
+    <item android:id="@+id/edit_perfil"
+        android:icon="@drawable/ic_mode_edit"
+        android:title="Cambiar foto de perfil"
+        app:showAsAction="ifRoom" />
+
+
+</menu>

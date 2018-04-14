@@ -23,5 +23,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_edit_main_cuenta">Editar Perfil</string>
+    <string name="title_activity_ful_imagen">FulImagen</string>
 
 </resources>
