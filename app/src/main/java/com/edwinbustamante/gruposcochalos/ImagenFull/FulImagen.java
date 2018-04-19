@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +23,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +57,7 @@ public class FulImagen extends AppCompatActivity {
     private int CAMERA_REQUEST_CODE = 0;
     PhotoViewAttacher mAttacher;//Para hacer Zoom en el imagen
     private static String APP_DIRECTORY = "GruposCochalos/";
-    private static String MEDIA_DIRECTORY = APP_DIRECTORY + "images";
+    private static String MEDIA_DIRECTORY = APP_DIRECTORY + "GruposCochalosImages";
 
     private final int MY_PERMISSIONS = 100;
     private final int PHOTO_CODE = 100;
@@ -85,6 +88,14 @@ public class FulImagen extends AppCompatActivity {
         Intent intent = getIntent();
         Bitmap bitmap = intent.getParcelableExtra("foto");
         iconoPerfil = (ImageView) findViewById(R.id.imagenfull);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        iconoPerfil.setMaxHeight(height);
+        iconoPerfil.setMaxWidth(width);
         iconoPerfil.setImageBitmap(bitmap);
 
         //hace que la imagen sea expansible
@@ -225,9 +236,14 @@ public class FulImagen extends AppCompatActivity {
 
                     Bitmap bitmap = BitmapFactory.decodeFile(mPath);
                     if (mAuth.getCurrentUser().getUid() != null) {
+                        //Me estoy apuntando al usuario que esta logueado
+                        DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
+                        //en la tablas usuario cambiamos el valor del nombre
+                        currentUserDB.child("perfil").setValue("nuevo valor");
+
 
                         Toast.makeText(this, "usuario logueado", Toast.LENGTH_SHORT).show();
-                        iconoPerfil.setImageBitmap(bitmap);
+                        iconoPerfil.setImageBitmap(rotateImage(bitmap,90));//rotamos la imagen
                     }
 
 
@@ -280,7 +296,11 @@ public class FulImagen extends AppCompatActivity {
         builder.show();
     }
 
-
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
 }
 
 
