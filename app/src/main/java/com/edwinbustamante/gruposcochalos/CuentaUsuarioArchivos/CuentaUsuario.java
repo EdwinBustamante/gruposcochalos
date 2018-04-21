@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.edwinbustamante.gruposcochalos.ImagenFull.FulImagen;
 import com.edwinbustamante.gruposcochalos.LoginActivity;
 import com.edwinbustamante.gruposcochalos.Objetos.FirebaseReferences;
@@ -33,6 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.util.UUID;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -51,6 +55,7 @@ public class CuentaUsuario extends AppCompatActivity implements View.OnClickList
     private TextView nombreGrupo, generoMusica;
     private Button cerrarSesion;
     private LinearLayout editMainCuenta;
+    private boolean confotodeperfil = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,7 @@ public class CuentaUsuario extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();//INSTANCIAMOS
         mStorageRef = FirebaseStorage.getInstance().getReference();
-       database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
 
 
         //database.setPersistenceEnabled(true);//Habilitamos la persistencia de datos de firebase
@@ -97,7 +102,15 @@ public class CuentaUsuario extends AppCompatActivity implements View.OnClickList
 
                             String imageUrl = dataSnapshot.child("perfil").getValue().toString();
                             if (!imageUrl.equals("default") || TextUtils.isEmpty(imageUrl)) {
-                                Picasso.with(CuentaUsuario.this).load(Uri.parse(dataSnapshot.child("perfil").getValue().toString())).into(cuenta_perfil);
+
+                                confotodeperfil = true;
+                                Glide.with(CuentaUsuario.this)
+                                        .load(imageUrl)
+                                        .fitCenter()
+                                        // .skipMemoryCache(true)//Almacenando en cache
+                                        .centerCrop()
+                                        .into(cuenta_perfil);
+                                // otro tipo Picasso.with(CuentaUsuario.this).load(Uri.parse(dataSnapshot.child("perfil").getValue().toString())).into(cuenta_perfil);
                             }
                         }
 
@@ -189,8 +202,7 @@ public class CuentaUsuario extends AppCompatActivity implements View.OnClickList
                         //Agarramos el id del usuario siempre verificando que este logueado y cambiamos su atributo de nombre agarrando de los cambios
                         DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
                         //en la tablas usuario cambiamos el valor del nombre
-                        currentUserDB.child("genero " +
-                                " ").setValue(inputGenero.getText().toString());
+                        currentUserDB.child("genero").setValue(inputGenero.getText().toString());
                     }
                 });
                 dialogoEditGenero.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -212,12 +224,9 @@ public class CuentaUsuario extends AppCompatActivity implements View.OnClickList
                 }
                 */
                 //pasando una imagen a otra actividad
-                Bitmap bitmap = ((BitmapDrawable) cuenta_perfil.getDrawable()).getBitmap();
-
                 Intent i = new Intent(CuentaUsuario.this, FulImagen.class);
-
-                i.putExtra("foto", bitmap);
                 CuentaUsuario.this.startActivity(i);
+
 
                 break;
             case R.id.cerrar_sesion:

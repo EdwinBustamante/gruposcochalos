@@ -2,6 +2,7 @@ package com.edwinbustamante.gruposcochalos.ImagenFull;
 
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -32,20 +34,33 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.edwinbustamante.gruposcochalos.Objetos.FirebaseReferences;
 import com.edwinbustamante.gruposcochalos.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.UUID;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission_group.CAMERA;
+import static android.Manifest.permission_group.STORAGE;
 
 public class FulImagen extends AppCompatActivity {
 
@@ -70,6 +85,13 @@ public class FulImagen extends AppCompatActivity {
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);//una vez que se inicia la actividad verificara que si el usuario esta logueado
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -85,8 +107,6 @@ public class FulImagen extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child(FirebaseReferences.USERS_REFERENCE);//hacemos referencia a la base de datos usuario tabla que tenemops como referencia en otra clase
 
-        Intent intent = getIntent();
-        Bitmap bitmap = intent.getParcelableExtra("foto");
         iconoPerfil = (ImageView) findViewById(R.id.imagenfull);
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -96,11 +116,50 @@ public class FulImagen extends AppCompatActivity {
         int height = size.y;
         iconoPerfil.setMaxHeight(height);
         iconoPerfil.setMaxWidth(width);
-        iconoPerfil.setImageBitmap(bitmap);
+
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null) {//verificamos que el usuario este logueado
+
+                    mDatabase.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {//obteniendo el identificador de usuario accedemos a su informacionn del usuario
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                         /*
+                            ANIADIENDO LOS ATRIBUTOS DESDE LA BASE DE DATOS AL XML DE LA CUENTA DE UN USUARIO
+                            * */
+
+                            String imageUrl = dataSnapshot.child("perfil").getValue().toString();
+                            if (!imageUrl.equals("default") || TextUtils.isEmpty(imageUrl)) {
+
+
+                                Glide.with(FulImagen.this)
+                                        .load(imageUrl)
+                                        .fitCenter()
+                                        // .skipMemoryCache(true)//Almacenando en cache
+                                        .centerCrop()
+                                        .into(iconoPerfil);
+                                // otro tipo Picasso.with(CuentaUsuario.this).load(Uri.parse(dataSnapshot.child("perfil").getValue().toString())).into(cuenta_perfil);
+                            } else {
+                                Uri uriImage = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.perfilmusic);
+                                iconoPerfil.setImageURI(uriImage);
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        };
 
         //hace que la imagen sea expansible
         mAttacher = new PhotoViewAttacher(iconoPerfil);
-
 
         // mOptionButton = (Button) findViewById(R.id.show_options_button);
         //mRlView = (RelativeLayout) findViewById(R.id.rl_view);
@@ -122,9 +181,7 @@ public class FulImagen extends AppCompatActivity {
             case R.id.edit_perfil:
                 if (mayRequestStoragePermission()) {
                     showOptions();
-
                 }
-
 
                 return true;
             default:
@@ -162,7 +219,7 @@ public class FulImagen extends AppCompatActivity {
     private void showOptions() {
         final CharSequence[] option = {"Tomar foto", "Elegir de galeria", "Cancelar"};
         final AlertDialog.Builder builder = new AlertDialog.Builder(FulImagen.this);
-        builder.setTitle("Eleige una opción");
+        builder.setTitle("Elige una opción");
         builder.setItems(option, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -170,8 +227,14 @@ public class FulImagen extends AppCompatActivity {
                     openCamera();
                 } else if (option[which] == "Elegir de galeria") {
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    startActivityForResult(intent.createChooser(intent, "Selecciona app de imagen"), SELECT_PICTURE);
+                    //  Intent intent = new Intent(Intent.ACTION_PICK);
+                       intent.setType("image/*");
+                    
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+
+                        startActivityForResult(intent, SELECT_PICTURE);
+                        // startActivityForResult(intent.createChooser(intent, "Selecciona app de imagen"), SELECT_PICTURE);
+                    }
                 } else {
                     dialog.dismiss();
                 }
@@ -203,18 +266,20 @@ public class FulImagen extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("file_path", mPath);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        mPath = savedInstanceState.getString("file_path");
-    }
+    /**
+     * @Override public void onSaveInstanceState(Bundle outState) {
+     * super.onSaveInstanceState(outState);
+     * outState.putString("file_path", mPath);
+     * }
+     * <p>
+     * <p>
+     * /**
+     * @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+     * super.onRestoreInstanceState(savedInstanceState);
+     * <p>
+     * mPath = savedInstanceState.getString("file_path");
+     * }
+     */
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -238,27 +303,103 @@ public class FulImagen extends AppCompatActivity {
                     if (mAuth.getCurrentUser().getUid() != null) {
                         //Me estoy apuntando al usuario que esta logueado
                         DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
+
                         //en la tablas usuario cambiamos el valor del nombre
-                        currentUserDB.child("perfil").setValue("nuevo valor");
-
-
+                        currentUserDB.child("perfil").setValue("default");
                         Toast.makeText(this, "usuario logueado", Toast.LENGTH_SHORT).show();
-                        iconoPerfil.setImageBitmap(rotateImage(bitmap,90));//rotamos la imagen
                     }
 
 
                     break;
                 case SELECT_PICTURE:
-                    Uri path = data.getData();
-                    iconoPerfil.setImageURI(path);
-                    break;
+                    final Uri uri = data.getData();
+                    //Me estoy apuntando al usuario que esta logueado
+                    final DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
+                    final StorageReference filePach = mStorageRef.child("imagenesperfil").child(uri.getLastPathSegment());
+                    currentUserDB.child("perfil").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String UrlImagenPerfil = dataSnapshot.getValue().toString();
+                            if (!UrlImagenPerfil.equals("default") && !UrlImagenPerfil.isEmpty()) {
+                                Task<Void> task = FirebaseStorage.getInstance().getReference(UrlImagenPerfil).delete();//Borramos en el Storage
+                                task.addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
 
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(FulImagen.this, "se elimino la foro correctamente", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(FulImagen.this, "fallo al eliminar la foro", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+                            }
+                            currentUserDB.child("perfil").removeEventListener(this);
+                            filePach.putFile(uri).addOnSuccessListener(FulImagen.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Uri downloadUri = taskSnapshot.getDownloadUrl();
+                                    currentUserDB.child("perfil").setValue(downloadUri.toString());
+                                    iconoPerfil.setImageURI(uri);
+                                }
+                            }).addOnFailureListener(FulImagen.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                }
+                            });
+                    /*agregamos para hacer put al Storage
+                    filePach.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            //en la tablas usuario cambiamos el valor del foto de perfin por la url de la imagen
+                            currentUserDB.child("perfil").setValue(downloadUrl.toString());
+                            Toast.makeText(FulImagen.this, "Se subio exitosamente la foto..!!", Toast.LENGTH_SHORT).show();
+
+                            //Glide.with(FulImagen.this)
+                            //      .load(taskSnapshot.getDownloadUrl().toString())
+                            //    .fitCenter()
+                            //  .centerCrop()
+                            //.signature(new StringSignature(UUID.randomUUID().toString()))
+                            /// .skipMemoryCache(true)//para que guarde en cache
+                            //.into(iconoPerfil);
+                            iconoPerfil.setImageURI(uri);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(FulImagen.this, "Fallo al subir la foto" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                        }
+                    });
+                   */
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    break;
             }
+
         }
     }
 
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == MY_PERMISSIONS) {
@@ -300,6 +441,13 @@ public class FulImagen extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        Toast.makeText(this, "atras", Toast.LENGTH_SHORT).show();
+        super.onBackPressed();
     }
 }
 
