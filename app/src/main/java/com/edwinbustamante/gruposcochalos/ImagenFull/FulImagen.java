@@ -2,7 +2,6 @@ package com.edwinbustamante.gruposcochalos.ImagenFull;
 
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -35,7 +34,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.signature.StringSignature;
 import com.edwinbustamante.gruposcochalos.Objetos.FirebaseReferences;
 import com.edwinbustamante.gruposcochalos.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,18 +47,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.util.UUID;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission_group.CAMERA;
-import static android.Manifest.permission_group.STORAGE;
 
 public class FulImagen extends AppCompatActivity {
 
@@ -73,11 +70,9 @@ public class FulImagen extends AppCompatActivity {
     PhotoViewAttacher mAttacher;//Para hacer Zoom en el imagen
     private static String APP_DIRECTORY = "GruposCochalos/";
     private static String MEDIA_DIRECTORY = APP_DIRECTORY + "GruposCochalosImages";
-
     private final int MY_PERMISSIONS = 100;
     private final int PHOTO_CODE = 100;
     private final int SELECT_PICTURE = 200;
-
     private ImageView iconoPerfil;
     private Button mOptionButton;
     private RelativeLayout mRlView;
@@ -90,6 +85,11 @@ public class FulImagen extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);//una vez que se inicia la actividad verificara que si el usuario esta logueado
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,14 +101,10 @@ public class FulImagen extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();//INSTANCIAMOS
-
         mStorageRef = FirebaseStorage.getInstance().getReference();
-
-
         mDatabase = FirebaseDatabase.getInstance().getReference().child(FirebaseReferences.USERS_REFERENCE);//hacemos referencia a la base de datos usuario tabla que tenemops como referencia en otra clase
 
         iconoPerfil = (ImageView) findViewById(R.id.imagenfull);
-
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -189,7 +185,6 @@ public class FulImagen extends AppCompatActivity {
         }
     }
 
-
     private boolean mayRequestStoragePermission() {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
@@ -215,7 +210,6 @@ public class FulImagen extends AppCompatActivity {
         return false;
     }
 
-
     private void showOptions() {
         final CharSequence[] option = {"Tomar foto", "Elegir de galeria", "Cancelar"};
         final AlertDialog.Builder builder = new AlertDialog.Builder(FulImagen.this);
@@ -227,14 +221,8 @@ public class FulImagen extends AppCompatActivity {
                     openCamera();
                 } else if (option[which] == "Elegir de galeria") {
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    //  Intent intent = new Intent(Intent.ACTION_PICK);
-                       intent.setType("image/*");
-                    
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-
-                        startActivityForResult(intent, SELECT_PICTURE);
-                        // startActivityForResult(intent.createChooser(intent, "Selecciona app de imagen"), SELECT_PICTURE);
-                    }
+                    intent.setType("image/*");
+                    startActivityForResult(intent.createChooser(intent, "Selecciona app de imagen"), SELECT_PICTURE);
                 } else {
                     dialog.dismiss();
                 }
@@ -266,20 +254,12 @@ public class FulImagen extends AppCompatActivity {
         }
     }
 
-    /**
-     * @Override public void onSaveInstanceState(Bundle outState) {
-     * super.onSaveInstanceState(outState);
-     * outState.putString("file_path", mPath);
-     * }
-     * <p>
-     * <p>
-     * /**
-     * @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
-     * super.onRestoreInstanceState(savedInstanceState);
-     * <p>
-     * mPath = savedInstanceState.getString("file_path");
-     * }
-     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("file_path", mPath);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -300,88 +280,63 @@ public class FulImagen extends AppCompatActivity {
 
 
                     Bitmap bitmap = BitmapFactory.decodeFile(mPath);
-                    if (mAuth.getCurrentUser().getUid() != null) {
-                        //Me estoy apuntando al usuario que esta logueado
-                        DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
-
-                        //en la tablas usuario cambiamos el valor del nombre
-                        currentUserDB.child("perfil").setValue("default");
-                        Toast.makeText(this, "usuario logueado", Toast.LENGTH_SHORT).show();
-                    }
-
-
+                    iconoPerfil.setImageBitmap(rotateImage(bitmap, 90));
                     break;
                 case SELECT_PICTURE:
+
+                    final ProgressDialog subiendoProgres = new ProgressDialog(FulImagen.this);
+                    subiendoProgres.setMessage("Subiendo foto....");
+                    subiendoProgres.show();
                     final Uri uri = data.getData();
-                    //Me estoy apuntando al usuario que esta logueado
+                    if (uri == null) {
+                        subiendoProgres.dismiss();
+                        return;
+                    }
+                    if (mStorageRef == null) {
+                        mStorageRef = FirebaseStorage.getInstance().getReference();
+                    }
+                    if (mDatabase == null) {
+                        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+                    }
+                    final StorageReference filepath = mStorageRef.child("fotosperfil").child(getRandomString());
                     final DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
-                    final StorageReference filePach = mStorageRef.child("imagenesperfil").child(uri.getLastPathSegment());
                     currentUserDB.child("perfil").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String UrlImagenPerfil = dataSnapshot.getValue().toString();
-                            if (!UrlImagenPerfil.equals("default") && !UrlImagenPerfil.isEmpty()) {
-                                Task<Void> task = FirebaseStorage.getInstance().getReference(UrlImagenPerfil).delete();//Borramos en el Storage
+                            String perfilAntiguo = dataSnapshot.getValue().toString();
+                            if (!perfilAntiguo.equals("default") && !perfilAntiguo.isEmpty()) {
+                                Task<Void> task = FirebaseStorage.getInstance().getReferenceFromUrl(perfilAntiguo).delete();
                                 task.addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         if (task.isSuccessful()) {
-                                            Toast.makeText(FulImagen.this, "se elimino la foro correctamente", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(FulImagen.this, "Eliminado Exitosamente", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            Toast.makeText(FulImagen.this, "fallo al eliminar la foro", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(FulImagen.this, "Fallo al eliminar la imagen", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
-
                             }
                             currentUserDB.child("perfil").removeEventListener(this);
-                            filePach.putFile(uri).addOnSuccessListener(FulImagen.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            filepath.putFile(uri).addOnSuccessListener(FulImagen.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
                                     Uri downloadUri = taskSnapshot.getDownloadUrl();
+
+                                    DatabaseReference currentUserDB = mDatabase.child(mAuth.getCurrentUser().getUid());
                                     currentUserDB.child("perfil").setValue(downloadUri.toString());
-                                    iconoPerfil.setImageURI(uri);
+                                    Toast.makeText(FulImagen.this, "todo listo esta", Toast.LENGTH_SHORT).show();
+                                    subiendoProgres.dismiss();
                                 }
                             }).addOnFailureListener(FulImagen.this, new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-
+                                    subiendoProgres.dismiss();
+                                    Toast.makeText(FulImagen.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
-                    /*agregamos para hacer put al Storage
-                    filePach.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            //en la tablas usuario cambiamos el valor del foto de perfin por la url de la imagen
-                            currentUserDB.child("perfil").setValue(downloadUrl.toString());
-                            Toast.makeText(FulImagen.this, "Se subio exitosamente la foto..!!", Toast.LENGTH_SHORT).show();
-
-                            //Glide.with(FulImagen.this)
-                            //      .load(taskSnapshot.getDownloadUrl().toString())
-                            //    .fitCenter()
-                            //  .centerCrop()
-                            //.signature(new StringSignature(UUID.randomUUID().toString()))
-                            /// .skipMemoryCache(true)//para que guarde en cache
-                            //.into(iconoPerfil);
-                            iconoPerfil.setImageURI(uri);
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(FulImagen.this, "Fallo al subir la foto" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-
-                        }
-                    });
-                   */
                         }
 
                         @Override
@@ -390,16 +345,20 @@ public class FulImagen extends AppCompatActivity {
                         }
                     });
 
+                    // iconoPerfil.setImageURI(path);
                     break;
-            }
 
+            }
         }
     }
 
+    private String getRandomString() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32);
+    }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == MY_PERMISSIONS) {
@@ -437,6 +396,7 @@ public class FulImagen extends AppCompatActivity {
         builder.show();
     }
 
+
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
@@ -444,11 +404,18 @@ public class FulImagen extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        finish();
-        Toast.makeText(this, "atras", Toast.LENGTH_SHORT).show();
-        super.onBackPressed();
+    protected void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(this, "esty destruido", Toast.LENGTH_LONG).show();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Toast.makeText(this, "estoy stop", Toast.LENGTH_SHORT).show();
+    }
+
 }
+
 
 

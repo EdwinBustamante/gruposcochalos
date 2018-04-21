@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.signature.StringSignature;
 import com.edwinbustamante.gruposcochalos.ImagenFull.FulImagen;
 import com.edwinbustamante.gruposcochalos.LoginActivity;
 import com.edwinbustamante.gruposcochalos.Objetos.FirebaseReferences;
@@ -34,9 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-
-import java.util.UUID;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -225,7 +218,9 @@ public class CuentaUsuario extends AppCompatActivity implements View.OnClickList
                 */
                 //pasando una imagen a otra actividad
                 Intent i = new Intent(CuentaUsuario.this, FulImagen.class);
-                CuentaUsuario.this.startActivity(i);
+               // i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+
 
 
                 break;
